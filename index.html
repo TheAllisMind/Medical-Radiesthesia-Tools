@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="QRA Checklist">
+    <title>QRA 37 Measurement Points - Clinical Assessment Checklist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .subtitle {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .btn.clear {
+            background: #e74c3c;
+        }
+        .btn.clear:hover {
+            background: #c0392b;
+        }
+        .btn.strong {
+            background: #27ae60;
+        }
+        .btn.strong:hover {
+            background: #219a52;
+        }
+        .point-container {
+            background: white;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .point-container:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        .point-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background: #fafbfc;
+        }
+        .point-info {
+            margin-bottom: 15px;
+        }
+        .point-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+        .point-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 5px 0;
+            font-size: 15px;
+        }
+        .point-code {
+            color: #7f8c8d;
+            font-family: monospace;
+            font-size: 13px;
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .point-location {
+            color: #34495e;
+            font-size: 14px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .bilateral {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .single {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .multiple {
+            background: #fff3e0;
+            color: #f57c00;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+            min-width: 90px;
+            min-height: 44px;
+            justify-content: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .checkbox-item:hover {
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+        .checkbox-item.strong {
+            background: #2ecc71;
+            border-color: #27ae60;
+            color: white;
+            font-weight: bold;
+        }
+        .checkbox-item.weak {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+            font-weight: bold;
+        }
+        .checkbox-item .label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .stats {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 180px;
+            z-index: 1000;
+        }
+        .stats h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .stat-strong {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .stat-weak {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+        .legend {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .legend h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin: 5px 15px 5px 0;
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+            border: 2px solid;
+        }
+        .legend-box.untested {
+            background: white;
+            border-color: #bdc3c7;
+        }
+        .legend-box.strong {
+            background: #2ecc71;
+            border-color: #27ae60;
+        }
+        .legend-box.weak {
+            background: #e74c3c;
+            border-color: #c0392b;
+        }
+        @media print {
+            .stats { display: none !important; }
+            .controls { display: none !important; }
+            .legend { display: none !important; }
+            body { 
+                background: white !important; 
+                font-size: 12px !important;
+                margin: 10px !important;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .point-container { 
+                box-shadow: none !important; 
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid !important;
+                margin: 5px 0 !important;
+            }
+            .point-header {
+                padding: 8px 12px !important;
+            }
+            .checkboxes {
+                gap: 8px !important;
+            }
+            .checkbox-item {
+                min-width: 60px !important;
+                padding: 6px 8px !important;
+                border: 2px solid !important;
+                font-size: 11px !important;
+            }
+            .checkbox-item.strong {
+                background: #2ecc71 !important;
+                border-color: #27ae60 !important;
+                color: white !important;
+            }
+            .checkbox-item.weak {
+                background: #e74c3c !important;
+                border-color: #c0392b !important;
+                color: white !important;
+            }
+            .header {
+                background: #667eea !important;
+                color: white !important;
+                margin-bottom: 15px !important;
+                padding: 15px !important;
+            }
+            h1 { font-size: 18px !important; }
+            .subtitle { font-size: 12px !important; }
+        }
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            .stats {
+                position: relative;
+                right: auto;
+                top: auto;
+                margin-bottom: 15px;
+                font-size: 14px;
+            }
+            .header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .controls {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            .btn {
+                padding: 12px 18px;
+                margin: 3px;
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            .point-container {
+                margin: 8px 0;
+            }
+            .point-header {
+                padding: 12px 15px;
+            }
+            .checkboxes {
+                gap: 8px;
+                margin-top: 12px;
+            }
+            .checkbox-item {
+                min-width: 85px;
+                padding: 12px 10px;
+                min-height: 44px;
+                font-size: 13px;
+            }
+            .point-location {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            .legend {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            .legend-item {
+                margin: 8px 12px 8px 0;
+                font-size: 14px;
+            }
+        }
+        
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .checkbox-item {
+                -webkit-tap-highlight-color: rgba(0,0,0,0);
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+            }
+            
+            .btn {
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+            
+            body {
+                -webkit-text-size-adjust: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>QRA 37 Measurement Points</h1>
+        <p class="subtitle">Clinical Assessment Checklist - Strong/Weak Testing</p>
+    </div>
+
+    <!-- iOS Optimization Notice -->
+    <div id="ios-notice" style="background: #3498db; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 14px; display: none;">
+        📱 <strong>iOS Tip:</strong> For best printing, use the "Print Assessment" button below. Tap "Add to Home" to install as an app!
+    </div>
+
+    <div class="legend">
+        <h3>Testing States:</h3>
+        <div class="legend-item">
+            <div class="legend-box untested"></div>
+            <span>Not Tested</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box strong"></div>
+            <span>Strong/Normal</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box weak"></div>
+            <span>Weak/Needs Attention</span>
+        </div>
+    </div>
+
+    <div class="stats">
+        <h3>Assessment Progress</h3>
+        <div class="stat-item">
+            <span>Tested:</span>
+            <span id="tested-count">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Strong:</span>
+            <span id="strong-count" class="stat-strong">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Weak:</span>
+            <span id="weak-count" class="stat-weak">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Remaining:</span>
+            <span id="remaining-count">63</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="stat-item">
+            <span>Progress:</span>
+            <span id="progress-percent">0%</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn strong" onclick="markAllStrong()">Mark All Strong</button>
+        <button class="btn clear" onclick="clearAll()">Clear All</button>
+        <button class="btn" onclick="printChecklist()">Print Assessment</button>
+        <button class="btn" onclick="saveToHomeScreen()" style="background: #9b59b6;">Add to Home</button>
+    </div>
+
+    <!-- QRA Points 1-10 -->
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">1.</div>
+                <div class="point-name">
+                    <span class="point-code">(CC-3)</span>Sacral CC (front)
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Midpoint between the navel & pubic symphysis (approx. CV-5)
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Sacral CC</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">2.</div>
+                <div class="point-name">
+                    <span class="point-code">(UB-23)</span>Kidney MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 1.5 cun lateral to the GV meridian, at the level of the lower border of the spinous process of the 2nd lumbar vertebrae
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Kidney L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Kidney R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">3.</div>
+                <div class="point-name">
+                    <span class="point-code">(GV-20)</span>Brain 1 MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the top of the head, at the vertex (highest point), approximately on the midpoint of the line connecting the apexes of both ears
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Brain 1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">4.</div>
+                <div class="point-name">
+                    <span class="point-code">(Ant. to GV-20)</span>Hypothalamus MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located on the midline of the cranium, 1 cun anterior to GV20 (the vertex of the head) at GV21
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Hypothalamus</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">5.</div>
+                <div class="point-name">
+                    <span class="point-code">(Yintang)</span>Pituitary MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located midway between the eyebrows on the midline of the forehead
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Pituitary</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">6.</div>
+                <div class="point-name">
+                    <span class="point-code">S1</span>Occipital Lobe MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located on the center of the occipital protuberance, about 1 cun lower than a vertical line parallel with the middle of the eye
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Occipital L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Occipital R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">7.</div>
+                <div class="point-name">
+                    <span class="point-code">(TW-20)</span>Cell Energy Point MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located on the cranium just above the apex of the ear
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Cell Energy L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Cell Energy R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">8.</div>
+                <div class="point-name">
+                    <span class="point-code">S2</span>Parathyroid MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 1 cun lateral and 1 cun superior to the hyoid bone
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Parathyroid L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Parathyroid R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">9.</div>
+                <div class="point-name">
+                    <span class="point-code">(CV-22)</span>Thyroid MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located in the center of the sternal notch on the midline of the throat area
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Thyroid</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">10.</div>
+                <div class="point-name">
+                    <span class="point-code">(Sternal angle)</span>Thymus MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located in the center of the sternal angle of Louis, at the point where the manubrium and body of the sternum meet
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Thymus</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QRA Points 11-20 -->
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">11.</div>
+                <div class="point-name">
+                    <span class="point-code">(CV-14)</span>Heart MPs (Inflow & Outflow)
+                    <span class="bilateral">INFLOW L + OUTFLOW</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Heart (Inflow)- L only: 3 cun lat. to the center of the sternal angle of Louis, then 3 cun inferior. Single point (Outflow): On the midline of the abdomen, 6 cun above the umbilicus
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Heart Inflow L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Heart Outflow</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">12.</div>
+                <div class="point-name">
+                    <span class="point-code">(CV-12)</span>Stomach MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the midline of the abdomen, 4 cun above the umbilicus, midway between the umbilicus and the inferior end of the sternum
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Stomach</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">13.</div>
+                <div class="point-name">
+                    <span class="point-code">(CV-4)</span>Small Intestine MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the midline of the abdomen, 3 cun below the umbilicus
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Small Intestine</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">14.</div>
+                <div class="point-name">
+                    <span class="point-code">(ST-25)</span>Large Intestine MPs
+                    <span class="bilateral">BILATERAL R & L</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 2 cun lateral to the center of the umbilicus
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Large Intestine L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Large Intestine R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">15.</div>
+                <div class="point-name">
+                    <span class="point-code">(S-49)</span>Colon MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Mid-point between left pelvic crest and center of pubic symphysis
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Colon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">16.</div>
+                <div class="point-name">
+                    <span class="point-code">(CV-3)</span>Reproductive MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located 1 cun above the pubic symphysis (Uterus/Prostate)
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Reproductive</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">17.</div>
+                <div class="point-name">
+                    <span class="point-code">(ST-29)</span>Gonad MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located 1 cun above the pubic symphysis, 2 cun lateral to the midline (Ovary/Testes)
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Gonad L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Gonad R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">18.</div>
+                <div class="point-name">
+                    <span class="point-code">Outflow</span>Urinary Bladder MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 1.5 cun lateral to midline on the inferior border of pubic symphysis
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Bladder L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Bladder R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">19.</div>
+                <div class="point-name">
+                    <span class="point-code">(SP-10)</span>Circulation MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 2 cun above the superior border of the patella, at the middle of the bulge of the vastus medialis
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Circulation L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Circulation R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">20.</div>
+                <div class="point-name">
+                    <span class="point-code">S6</span>Lymphatic MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On lateral side of the small toe, including the entire lateral area of distal phalanx of the small toe
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Lymphatic L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Lymphatic R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QRA Points 21-30 -->
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">21.</div>
+                <div class="point-name">
+                    <span class="point-code">(GB-25)</span>Adrenal MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the lateral side of the abdomen, on the lower border of the free end of the 12th rib
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Adrenal L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Adrenal R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">22.</div>
+                <div class="point-name">
+                    <span class="point-code">(LIV-13)</span>Spleen MP
+                    <span class="single">L ONLY</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the lateral side of the waist, below the free end of the 11th floating rib
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Spleen</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">23.</div>
+                <div class="point-name">
+                    <span class="point-code">(ST-19)</span>Insulin MP
+                    <span class="single">L ONLY</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Front of body immediately below the last rib on the left side of the sternum
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Insulin</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">24.</div>
+                <div class="point-name">
+                    <span class="point-code">(GB-24)</span>Gallbladder MP
+                    <span class="single">R ONLY</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Directly below the nipple, in the 7th intercostal space, one rib below LIV 14
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Gallbladder</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">25.</div>
+                <div class="point-name">
+                    <span class="point-code">(LIV-14)</span>Liver MP
+                    <span class="single">R ONLY</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the mammillary line, 2 ribs below the nipple, in the 6th intercostal space
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Liver</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">26.</div>
+                <div class="point-name">
+                    <span class="point-code">(LIV-13)</span>Pancreas MP
+                    <span class="single">R ONLY</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> On the lateral side of the waist, below the free end of the 11th floating rib
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Pancreas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">27.</div>
+                <div class="point-name">
+                    <span class="point-code">S5 (Mastoid)</span>Deep Sleep MPs
+                    <span class="bilateral">BILATERAL R & L</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located on the center of the mastoid process, posterior to the earlobe
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Deep Sleep L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Deep Sleep R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">28.</div>
+                <div class="point-name">
+                    <span class="point-code">(GV-14; C7-T1)</span>Bone MP
+                    <span class="single">SINGLE</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Between the spinous processes of the 7th cervical vertebra and the 1st thoracic vertebra
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Bone</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">29.</div>
+                <div class="point-name">
+                    <span class="point-code">(LU-1)</span>Lung MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Below the acromial extremity of the clavicle, lateral and inferior to the clavicle at the lateral side of the intercostal space
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Lung L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Lung R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">30.</div>
+                <div class="point-name">
+                    <span class="point-code">S8</span>Sinus MPs (3 areas)
+                    <span class="multiple">5 TOTAL POINTS</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 
+                    • Frontal Sinus: Midline of head, inferior to horizontal line between eyebrows<br>
+                    • Maxillary Sinus: Bilateral in center of each cheek, below center of eye<br>
+                    • Ethmoid Sinus: Bilateral on side of center of nose
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Frontal Sinus</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Maxillary L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Maxillary R</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Ethmoid L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Ethmoid R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QRA Points 31-37 -->
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">31.</div>
+                <div class="point-name">
+                    <span class="point-code">S3</span>Brain 2 MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 1 cun posterior and superior to Deep Sleep Point
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Brain 2 L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Brain 2 R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">32.</div>
+                <div class="point-name">
+                    <span class="point-code">S4</span>Brain 3 MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> 1 cun posterior and superior to Brain 2 Point
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Brain 3 L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Brain 3 R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">33.</div>
+                <div class="point-name">
+                    <span class="point-code">S7</span>Parotid Gland MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located 1 cun anterior to the jaw joint
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Parotid L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Parotid R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">34.</div>
+                <div class="point-name">
+                    <span class="point-code">S9</span>Sweat Band MPs: IF (numerous)
+                    <span class="multiple">3 AREAS</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located midway in a line between the hairline and eyebrows, about one cun apart
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Sweat Band L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Sweat Band C</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Sweat Band R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">35.</div>
+                <div class="point-name">
+                    <span class="point-code">S10</span>Eye MPs (Over center of eye)
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located at center of the eye at the pupil (tested with the eye closed)
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Eye L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Eye R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">36.</div>
+                <div class="point-name">
+                    <span class="point-code">S11</span>Skin MP (burns, scars, etc.)
+                    <span class="multiple">SPECIFIC AREAS</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Specific individualized areas (burns, scars, interference fields)
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Skin Area 1</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Skin Area 2</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Skin Area 3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="point-container">
+        <div class="point-header">
+            <div class="point-info">
+                <div class="point-number">37.</div>
+                <div class="point-name">
+                    <span class="point-code">S12</span>Ear MPs
+                    <span class="bilateral">BILATERAL L & R</span>
+                </div>
+                <div class="point-location">
+                    <strong>Location:</strong> Located at the center of each ear auricle
+                </div>
+            </div>
+            <div class="checkboxes">
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Ear L</span>
+                </div>
+                <div class="checkbox-item" onclick="toggleState(this)">
+                    <span class="label">Ear R</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Total number of individual checkboxes (63 total testing points)
+        const totalCheckboxes = 63;
+
+        function toggleState(element) {
+            if (element.classList.contains('strong')) {
+                // Strong -> Weak
+                element.classList.remove('strong');
+                element.classList.add('weak');
+            } else if (element.classList.contains('weak')) {
+                // Weak -> Untested
+                element.classList.remove('weak');
+            } else {
+                // Untested -> Strong
+                element.classList.add('strong');
+            }
+            updateStats();
+        }
+
+        function markAllStrong() {
+            const checkboxes = document.querySelectorAll('.checkbox-item');
+            checkboxes.forEach(checkbox => {
+                checkbox.classList.remove('weak');
+                checkbox.classList.add('strong');
+            });
+            updateStats();
+        }
+
+        function clearAll() {
+            const checkboxes = document.querySelectorAll('.checkbox-item');
+            checkboxes.forEach(checkbox => {
+                checkbox.classList.remove('strong', 'weak');
+            });
+            updateStats();
+        }
+
+        function updateStats() {
+            const strongCount = document.querySelectorAll('.checkbox-item.strong').length;
+            const weakCount = document.querySelectorAll('.checkbox-item.weak').length;
+            const testedCount = strongCount + weakCount;
+            const remainingCount = totalCheckboxes - testedCount;
+            const progressPercent = Math.round((testedCount / totalCheckboxes) * 100);
+
+            document.getElementById('tested-count').textContent = testedCount;
+            document.getElementById('strong-count').textContent = strongCount;
+            document.getElementById('weak-count').textContent = weakCount;
+            document.getElementById('remaining-count').textContent = remainingCount;
+            document.getElementById('progress-percent').textContent = progressPercent + '%';
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+        }
+
+        function printChecklist() {
+            // iOS Safari print optimization
+            if (window.navigator.userAgent.includes('Safari') && window.navigator.userAgent.includes('Mobile')) {
+                // For iOS Safari, create a better print experience
+                const printWindow = window.open('', '_blank');
+                const currentDoc = document.documentElement.outerHTML;
+                printWindow.document.write(currentDoc);
+                printWindow.document.close();
+                
+                // Wait for content to load, then print
+                setTimeout(() => {
+                    printWindow.focus();
+                    printWindow.print();
+                }, 500);
+            } else {
+                // Standard print for other browsers
+                window.print();
+            }
+        }
+
+        function saveToHomeScreen() {
+            if (window.navigator.userAgent.includes('Safari') && window.navigator.userAgent.includes('Mobile')) {
+                alert('To add to Home Screen:\n1. Tap the Share button (⬆)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add"');
+            } else {
+                alert('This feature is designed for iOS Safari. Please bookmark this page for easy access.');
+            }
+        }
+
+        // Prevent iOS zoom on touch
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Double-tap zoom prevention
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Show iOS notice for iOS devices
+        if (window.navigator.userAgent.includes('Safari') && window.navigator.userAgent.includes('Mobile')) {
+            document.getElementById('ios-notice').style.display = 'block';
+        }
+
+        // Initialize stats
+        updateStats();
+    </script>
+</body>
+</html>
