@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRA Protocol Generator - Clinical Documentation System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .controls-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .qra-points-grid {
+            margin: 20px 0;
+        }
+        
+        .point-category {
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        
+        .point-category h4 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .point-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        .point-row label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .point-row label:hover {
+            background: #f0f8ff;
+        }
+        
+        .point-row input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+        
+        .bilateral-points, .multiple-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .bilateral-group, .multiple-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .point-name {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 200px;
+        }
+        
+        .bilateral-group label, .multiple-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bilateral-group label:hover, .multiple-group label:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+        
+        .bilateral-group input[type="checkbox"], .multiple-group input[type="checkbox"] {
+            margin: 0;
+            transform: scale(1.1);
+        }
+        
+        .quick-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .quick-controls button:first-child {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .quick-controls button:first-child:hover {
+            background: #5a6268;
+        }
+        
+        .quick-controls button:last-child {
+            background: #007bff;
+            color: white;
+        }
+        
+        .quick-controls button:last-child:hover {
+            background: #0056b3;
+        }
+        
+        .weak-points-summary {
+            background: #e8f4f8;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .pattern-analysis {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .priority-analysis {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .knowledge-gaps {
+            background: #e2e3e5;
+            border: 1px solid #d6d8db;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .gap-item {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        #recommendations-results {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .recommendation-item, .custom-recommendation-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .custom-recommendation-item {
+            border-left-color: #28a745;
+        }
+        
+        .success-note {
+            display: block;
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .photo-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .photo-upload-area:hover {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+        
+        .photo-upload-area input {
+            display: none;
+        }
+        
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .saved-protocols {
+            margin-top: 30px;
+        }
+        
+        .protocol-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .protocol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .protocol-date {
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .protocol-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .protocol-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .view-btn {
+            background: #007bff;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .export-btn {
+            background: #28a745;
+            color: white;
+            margin-top: 20px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .point-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .bilateral-group, .multiple-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .point-name {
+                min-width: auto;
+                margin-bottom: 8px;
+            }
+            
+            .bilateral-group label, .multiple-group label {
+                margin: 2px 0;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-controls {
+                flex-direction: column;
+            }
+            
+            .protocol-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .quick-controls, .protocol-actions, .export-btn {
+                display: none;
+            }
+            
+            .form-section {
+                page-break-inside: avoid;
+            }
+            
+            .photo-preview img {
+                max-width: 150px;
+                max-height: 120px;
+                margin: 5px;
+                page-break-inside: avoid;
+            }
+            
+            .photo-upload-area {
+                display: none;
+            }
+            
+            /* Ensure photos print in color */
+            .photo-preview {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            /* Group photos nicely on print */
+            #photo-preview, #emitter-photo-preview, #dial-photo-preview {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin: 10px 0;
+                page-break-inside: avoid;
+            }
+            
+            /* Add labels for photo sections when printing */
+            #emitter-photo-preview:before {
+                content: "Emitter Photos:";
+                font-weight: bold;
+                width: 100%;
+                display: block;
+                margin-bottom: 5px;
+            }
+            
+            #dial-photo-preview:before {
+                content: "Dial Readings Photos:";
+                font-weight: bold;
+                width: 100%;
+                display: block;
+                margin-bottom: 5px;
+            }
+            
+            #photo-preview:before {
+                content: "Completed Work Photos:";
+                font-weight: bold;
+                width: 100%;
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 QRA Protocol Generator</h1>
+            <p>Clinical Documentation System with Jin Shin Jyutsu Integration</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Manual Point Selection -->
+            <div class="controls-section">
+                <h3>Select Weak Measurement Points</h3>
+                <p>Check all points that tested weak in your QRA assessment:</p>
+                
+                <!-- Quick Selection Controls -->
+                <div class="quick-controls">
+                    <button onclick="clearAllWeakPoints()">Clear All</button>
+                    <button onclick="generateRecommendations()">Generate Recommendations</button>
+                </div>
+                
+                <!-- QRA Points Selection Grid -->
+                <div class="qra-points-grid">
+                    <!-- Single Points -->
+                    <div class="point-category">
+                        <h4>Single Points</h4>
+                        <div class="point-row">
+                            <label><input type="checkbox" class="weak-point" value="1" data-name="Sacral CC (CC-3)"> 1. Sacral CC (CC-3)</label>
+                            <label><input type="checkbox" class="weak-point" value="3" data-name="Brain 1 MP (GV-20)"> 3. Brain 1 MP (GV-20)</label>
+                            <label><input type="checkbox" class="weak-point" value="4" data-name="Hypothalamus MP"> 4. Hypothalamus MP</label>
+                            <label><input type="checkbox" class="weak-point" value="5" data-name="Pituitary MP"> 5. Pituitary MP</label>
+                            <label><input type="checkbox" class="weak-point" value="9" data-name="Thyroid MP (CV-22)"> 9. Thyroid MP (CV-22)</label>
+                            <label><input type="checkbox" class="weak-point" value="10" data-name="Thymus MP"> 10. Thymus MP</label>
+                            <label><input type="checkbox" class="weak-point" value="11" data-name="Heart Inflow MP (L only)"> 11. Heart Inflow MP (L only)</label>
+                            <label><input type="checkbox" class="weak-point" value="12" data-name="Heart Outflow MP (CV-14)"> 12. Heart Outflow MP (CV-14)</label>
+                            <label><input type="checkbox" class="weak-point" value="13" data-name="Stomach MP (CV-12)"> 13. Stomach MP (CV-12)</label>
+                            <label><input type="checkbox" class="weak-point" value="14" data-name="Small Intestine MP (CV-4)"> 14. Small Intestine MP (CV-4)</label>
+                            <label><input type="checkbox" class="weak-point" value="15" data-name="Colon MP (S-49)"> 15. Colon MP (S-49)</label>
+                            <label><input type="checkbox" class="weak-point" value="16" data-name="Uterus MP (CV-3)"> 16. Uterus MP (CV-3)</label>
+                            <label><input type="checkbox" class="weak-point" value="16" data-name="Prostate MP (CV-3)"> 16. Prostate MP (CV-3)</label>
+                            <label><input type="checkbox" class="weak-point" value="22" data-name="Spleen MP (LIV-13) L only"> 22. Spleen MP (LIV-13) L only</label>
+                            <label><input type="checkbox" class="weak-point" value="23" data-name="Insulin MP (ST-19) L only"> 23. Insulin MP (ST-19) L only</label>
+                            <label><input type="checkbox" class="weak-point" value="24" data-name="Gallbladder MP (GB-24) R only"> 24. Gallbladder MP (GB-24) R only</label>
+                            <label><input type="checkbox" class="weak-point" value="25" data-name="Liver MP (LIV-14) R only"> 25. Liver MP (LIV-14) R only</label>
+                            <label><input type="checkbox" class="weak-point" value="26" data-name="Pancreas MP (LIV-13) R only"> 26. Pancreas MP (LIV-13) R only</label>
+                            <label><input type="checkbox" class="weak-point" value="28" data-name="Bone MP (GV-14)"> 28. Bone MP (GV-14)</label>
+                            <label><input type="checkbox" class="weak-point" value="30" data-name="Frontal Sinus"> 30. Frontal Sinus</label>
+                        </div>
+                    </div>
+
+                    <!-- Bilateral Points -->
+                    <div class="point-category">
+                        <h4>Bilateral Points (L & R)</h4>
+                        <div class="bilateral-points">
+                            <div class="bilateral-group">
+                                <span class="point-name">2. Kidney MPs (UB-23):</span>
+                                <label><input type="checkbox" class="weak-point" value="2L" data-name="Kidney MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="2R" data-name="Kidney MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">6. Occipital Lobe MPs (S1):</span>
+                                <label><input type="checkbox" class="weak-point" value="6L" data-name="Occipital Lobe MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="6R" data-name="Occipital Lobe MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">7. Cell Energy MPs (TW-20):</span>
+                                <label><input type="checkbox" class="weak-point" value="7L" data-name="Cell Energy MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="7R" data-name="Cell Energy MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">8. Parathyroid MPs (S2):</span>
+                                <label><input type="checkbox" class="weak-point" value="8L" data-name="Parathyroid MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="8R" data-name="Parathyroid MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">17. Ovary/Testes MPs (ST-29):</span>
+                                <label><input type="checkbox" class="weak-point" value="17L" data-name="Ovary/Testes MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="17R" data-name="Ovary/Testes MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">18. Urinary Bladder MPs:</span>
+                                <label><input type="checkbox" class="weak-point" value="18L" data-name="Urinary Bladder MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="18R" data-name="Urinary Bladder MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">19. Circulation MPs (SP-10):</span>
+                                <label><input type="checkbox" class="weak-point" value="19L" data-name="Circulation MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="19R" data-name="Circulation MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">20. Lymphatic MPs (S6):</span>
+                                <label><input type="checkbox" class="weak-point" value="20L" data-name="Lymphatic MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="20R" data-name="Lymphatic MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">21. Adrenal MPs (GB-25):</span>
+                                <label><input type="checkbox" class="weak-point" value="21L" data-name="Adrenal MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="21R" data-name="Adrenal MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">27. Deep Sleep MPs (S5):</span>
+                                <label><input type="checkbox" class="weak-point" value="27L" data-name="Deep Sleep MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="27R" data-name="Deep Sleep MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">29. Lung MPs (LU-1):</span>
+                                <label><input type="checkbox" class="weak-point" value="29L" data-name="Lung MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="29R" data-name="Lung MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">30. Maxillary Sinus MPs:</span>
+                                <label><input type="checkbox" class="weak-point" value="30L" data-name="Maxillary Sinus Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="30R" data-name="Maxillary Sinus Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">30. Ethmoid Sinus MPs:</span>
+                                <label><input type="checkbox" class="weak-point" value="30EL" data-name="Ethmoid Sinus Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="30ER" data-name="Ethmoid Sinus Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">31. Brain 2 MPs (S3):</span>
+                                <label><input type="checkbox" class="weak-point" value="31L" data-name="Brain 2 MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="31R" data-name="Brain 2 MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">32. Brain 3 MPs (S4):</span>
+                                <label><input type="checkbox" class="weak-point" value="32L" data-name="Brain 3 MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="32R" data-name="Brain 3 MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">33. Parotid Gland MPs (S7):</span>
+                                <label><input type="checkbox" class="weak-point" value="33L" data-name="Parotid Gland MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="33R" data-name="Parotid Gland MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">35. Eye MPs (S10):</span>
+                                <label><input type="checkbox" class="weak-point" value="35L" data-name="Eye MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="35R" data-name="Eye MP Right"> Right</label>
+                            </div>
+                            <div class="bilateral-group">
+                                <span class="point-name">37. Ear MPs (S12):</span>
+                                <label><input type="checkbox" class="weak-point" value="37L" data-name="Ear MP Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="37R" data-name="Ear MP Right"> Right</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Multiple Area Points -->
+                    <div class="point-category">
+                        <h4>Multiple Area Points</h4>
+                        <div class="multiple-points">
+                            <div class="multiple-group">
+                                <span class="point-name">34. Sweat Band MPs (S9):</span>
+                                <label><input type="checkbox" class="weak-point" value="34L" data-name="Sweat Band Left"> Left</label>
+                                <label><input type="checkbox" class="weak-point" value="34C" data-name="Sweat Band Center"> Center</label>
+                                <label><input type="checkbox" class="weak-point" value="34R" data-name="Sweat Band Right"> Right</label>
+                            </div>
+                            <div class="multiple-group">
+                                <span class="point-name">36. Skin MPs (S11):</span>
+                                <label><input type="checkbox" class="weak-point" value="36A" data-name="Skin Area 1"> Area 1</label>
+                                <label><input type="checkbox" class="weak-point" value="36B" data-name="Skin Area 2"> Area 2</label>
+                                <label><input type="checkbox" class="weak-point" value="36C" data-name="Skin Area 3"> Area 3</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations Results -->
+            <div id="recommendations-results"></div>
+
+            <!-- Protocol Documentation Form -->
+            <div class="form-section" id="protocol-form" style="display: none;">
+                <h3>📋 Document Custom Protocol</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assessment-date">Assessment Date:</label>
+                        <input type="date" id="assessment-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-initials">Client Initials:</label>
+                        <input type="text" id="client-initials" placeholder="e.g., J.S." maxlength="10">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="weak-points-found">Weak Points Found:</label>
+                        <textarea id="weak-points-found" readonly placeholder="Auto-populated from selection above"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emitter-measurements">Emitter/Archetype Ruler Measurements:</label>
+                        <textarea id="emitter-measurements" placeholder="Document angles, positions, calibration settings for emitters created"></textarea>
+                        <div class="photo-upload-area" onclick="document.getElementById('emitter-photo-upload').click()" style="margin-top: 10px;">
+                            <input type="file" id="emitter-photo-upload" multiple accept="image/*" onchange="handleEmitterPhotoUpload(event)">
+                            <p>📸 Add photos of emitter setup and measurements</p>
+                        </div>
+                        <div id="emitter-photo-preview" class="photo-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="biosignature-details">Biosignature Chosen:</label>
+                        <textarea id="biosignature-details" placeholder="Geometric patterns selected, measurements, radiesthetic findings"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dial-angles">Radiesthetic Dial Angles:</label>
+                        <textarea id="dial-angles" placeholder="Specific dial measurements, frequencies, band readings"></textarea>
+                        <div class="photo-upload-area" onclick="document.getElementById('dial-photo-upload').click()" style="margin-top: 10px;">
+                            <input type="file" id="dial-photo-upload" multiple accept="image/*" onchange="handleDialPhotoUpload(event)">
+                            <p>📸 Add photos of dial readings and measurements</p>
+                        </div>
+                        <div id="dial-photo-preview" class="photo-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="jsj-protocols-used">JSJ Protocols Used:</label>
+                        <textarea id="jsj-protocols-used" placeholder="Finger holds applied, SEL work, timing, effectiveness"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custom-solutions">Custom Solutions Applied:</label>
+                        <textarea id="custom-solutions" placeholder="Your unique approaches, combinations, timing protocols"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="success-indicators">Success Indicators:</label>
+                        <select id="success-indicators">
+                            <option value="">Select outcome...</option>
+                            <option value="immediate-improvement">Immediate Improvement (same session)</option>
+                            <option value="improved-next-session">Improved at Next Session</option>
+                            <option value="partial-improvement">Partial Improvement</option>
+                            <option value="no-change">No Change</option>
+                            <option value="follow-up-needed">Follow-up Needed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clinical-notes">Clinical Notes & Context:</label>
+                    <textarea id="clinical-notes" placeholder="Environmental factors, client history, patterns observed, future recommendations"></textarea>
+                </div>
+                
+                <!-- Photo Upload Section -->
+                <div class="form-group">
+                    <label>📸 Photos of Completed Work:</label>
+                    <div class="photo-upload-area" onclick="document.getElementById('photo-upload').click()">
+                        <input type="file" id="photo-upload" multiple accept="image/*" onchange="handlePhotoUpload(event)">
+                        <p>📱 Tap to add photos of emitters, biosignatures, tool setups</p>
+                        <small>Multiple photos supported - document your process!</small>
+                    </div>
+                    <div id="photo-preview" class="photo-preview"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="follow-up-date">Next Follow-up Date:</label>
+                        <input type="date" id="follow-up-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="protocol-priority">Protocol Priority:</label>
+                        <select id="protocol-priority">
+                            <option value="routine">Routine</option>
+                            <option value="important">Important</option>
+                            <option value="critical">Critical</option>
+                            <option value="research">Research Interest</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                    <button onclick="saveProtocol()" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 500;">💾 Save Protocol</button>
+                    <button onclick="printProtocol()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 500;">🖨️ Print Report</button>
+                    <button onclick="clearForm()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 500;">🗑️ Clear Form</button>
+                </div>
+            </div>
+
+            <!-- Saved Protocols Section -->
+            <div class="saved-protocols">
+                <h3>📚 Saved Clinical Protocols</h3>
+                <div id="saved-protocols-list"></div>
+                <button onclick="exportData()" class="export-btn">📤 Export All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clear all weak point selections
+        function clearAllWeakPoints() {
+            document.querySelectorAll('.weak-point').forEach(cb => cb.checked = false);
+        }
+
+        // Generate recommendations based on selected weak points
+        function generateRecommendations() {
+            const selectedPoints = [];
+            document.querySelectorAll('.weak-point:checked').forEach(cb => {
+                selectedPoints.push({
+                    value: cb.value,
+                    name: cb.getAttribute('data-name')
+                });
+            });
+            
+            if (selectedPoints.length === 0) {
+                alert('Please select at least one weak measurement point first.');
+                return;
+            }
+            
+            const recommendations = getStandardRecommendations(selectedPoints);
+            const customRecommendations = getCustomRecommendations(selectedPoints);
+            const patternAnalysis = analyzeSelectedPattern(selectedPoints);
+            
+            displayRecommendations(recommendations, customRecommendations, patternAnalysis, selectedPoints);
+        }
+        
+        function analyzeSelectedPattern(selectedPoints) {
+            const pointValues = selectedPoints.map(p => p.value);
+            const patterns = [];
+            const priorities = [];
+            const jsjProtocols = [];
+            
+            // Enhanced pattern recognition with JSJ integration
+            if (pointValues.some(p => ['2L', '2R', '2'].includes(p)) && 
+                pointValues.some(p => ['21L', '21R', '21'].includes(p))) {
+                patterns.push('🔗 KIDNEY-ADRENAL EXHAUSTION: Classic stress and fatigue pattern');
+                priorities.push('HIGH: Support adrenal-kidney axis first');
+                jsjProtocols.push('🤲 JSJ Protocol: INDEX finger holds (20-60 min) + SEL 23 work. Peak time: 6-8 PM');
+            }
+            
+            if (pointValues.some(p => ['2L', '2R', '2'].includes(p)) && 
+                pointValues.some(p => ['25'].includes(p))) {
+                patterns.push('🔗 DETOXIFICATION OVERLOAD: Kidney-liver stress pattern');
+                priorities.push('HIGH: Support detox pathways');
+                jsjProtocols.push('🤲 JSJ Protocol: INDEX + MIDDLE finger rotation. Kidney peak: 6-8 PM, Liver peak: 2-4 AM');
+            }
+            
+            if (pointValues.some(p => p.startsWith('36'))) {
+                patterns.push('🔗 INTERFERENCE FIELD: Scar/trauma blocking energy flow');
+                priorities.push('🚨 IMMEDIATE: Clear interference fields geometrically FIRST - blocks all other healing');
+                jsjProtocols.push('⚠️ JSJ Protocol: Address geometric correction first, then organ-specific finger holds');
+            }
+            
+            if (pointValues.some(p => ['13'].includes(p)) && 
+                (pointValues.some(p => ['25'].includes(p)) || pointValues.some(p => ['26'].includes(p)))) {
+                patterns.push('🔗 DIGESTIVE DYSFUNCTION: Stomach-liver-pancreas imbalance');
+                priorities.push('MEDIUM: Digestive system optimization');
+                jsjProtocols.push('🤲 JSJ Protocol: THUMB + MIDDLE finger rotation. Stomach peak: 8-10 AM, Liver peak: 2-4 AM');
+            }
+            
+            if (pointValues.some(p => ['3', '31L', '31R', '32L', '32R'].includes(p))) {
+                patterns.push('🔗 NEUROLOGICAL STRESS: Brain function and sleep disruption');
+                priorities.push('HIGH: Brain and nervous system support');
+                jsjProtocols.push('🤲 JSJ Protocol: All fingers sequentially for brain integration + SEL 26 work');
+            }
+            
+            if (pointValues.some(p => ['11', '12'].includes(p)) && 
+                pointValues.some(p => ['19L', '19R'].includes(p))) {
+                patterns.push('🔗 CARDIOVASCULAR STRESS: Heart and circulation under pressure');
+                priorities.push('HIGH: Cardiovascular support critical');
+                jsjProtocols.push('🤲 JSJ Protocol: LITTLE finger holds (20-60 min) + SEL 15, 26. Peak: 12-2 PM');
+            }
+            
+            if (pointValues.some(p => ['29L', '29R'].includes(p)) && 
+                pointValues.some(p => ['30', '30L', '30R'].includes(p))) {
+                patterns.push('🔗 RESPIRATORY/IMMUNE: Lung and sinus congestion pattern');
+                priorities.push('MEDIUM-HIGH: Respiratory system support');
+                jsjProtocols.push('🤲 JSJ Protocol: RING finger holds (20-60 min) + SEL 4, 13. Peak: 4-6 AM');
+            }
+            
+            return { patterns, priorities, jsjProtocols };
+        }
+
+        function getStandardRecommendations(selectedPoints) {
+            const pointValues = selectedPoints.map(p => p.value);
+            const recommendations = [];
+            
+            // Complete QRA protocols with JSJ integration from clinical guide
+            const standardProtocols = {
+                '1': {
+                    name: 'Sacral CC (CC-3)',
+                    prl: 'Adaptogen-R3™, Pr. Multi Vitamin, AdrenaVen™, Pr. DHA, EPA/DHA Marine',
+                    jsj: 'THUMB finger hold (20-60 min) - Worry/foundation support. SEL 1: Prime Mover',
+                    band: 'Red Band (foundation frequency of physical vitality and grounding)',
+                    timing: 'First Depth energy (ages 1-15), Earth element foundation',
+                    clinical: 'Foundation point for all other corrections. Weak when disconnected from physical reality.'
+                },
+                '2L': {
+                    name: 'Kidney Left',
+                    prl: 'Pr. DHA, EPA/DHA Marine, RenaVen™, Inflammacidin, CircuZyme, NZ-Red Velvet Deer Antler',
+                    jsj: 'INDEX finger hold (20-60 min) - Past trauma/fear release. Peak: 6-8 PM',
+                    band: 'Blue Band (communication/past emotional patterns)',
+                    timing: 'Scorpio timing, evening kidney flow activation',
+                    clinical: 'Often relates to past trauma/stress patterns requiring resolution.'
+                },
+                '2R': {
+                    name: 'Kidney Right', 
+                    prl: 'Pr. DHA, EPA/DHA Marine, RenaVen™, Inflammacidin, CircuZyme, NZ-Red Velvet Deer Antler',
+                    jsj: 'INDEX finger hold (20-60 min) - Current stress/functional support. Peak: 6-8 PM',
+                    band: 'Infrared Band (current functional structure support)',
+                    timing: 'Scorpio timing, evening kidney flow activation',
+                    clinical: 'Often relates to current functional stress requiring immediate support.'
+                },
+                '3': {
+                    name: 'Brain 1 MP (GV-20)',
+                    prl: 'Pr. DHA, Pr. Complete B Capsules, CogniTropic™, Max B-ND™, NZ-Red Velvet Deer Antler',
+                    jsj: 'ALL fingers sequentially for brain integration. SEL 26: Complete',
+                    band: 'Violet/Ultraviolet (transformation and higher consciousness)',
+                    timing: 'Crown chakra - spiritual connection, affects all organ flows',
+                    clinical: 'Master point influencing all other testing. Weak in mental fog, spiritual disconnection.'
+                },
+                '11': {
+                    name: 'Heart Inflow MP',
+                    prl: 'CardioVen™, Pr. Fermented Beets, Deltanol™, CircuZyme™, Pr. Taurine Blend',
+                    jsj: 'LITTLE finger hold (20-60 min) - Heart/emotional support. SEL 15, 26. Peak: 12-2 PM',
+                    band: 'Red/Gold (central spiritual fire and life force)',
+                    timing: 'Leo (July 22-Aug 23), Magnesium Phosphate support',
+                    clinical: 'Weak with cardiovascular issues, emotional stress. Central organizing point.'
+                },
+                '13': {
+                    name: 'Stomach MP (CV-12)',
+                    prl: 'Pr. Pink Salt (up to age 30) / Pr. HCL (over age 30), GastroVen, Inflammacidin',
+                    jsj: 'THUMB finger hold (20-60 min) - Worry/stomach support. SEL 1, 14. Peak: 8-10 AM',
+                    band: 'Yellow (mental clarity frequency governing logical processes)',
+                    timing: 'Gemini (May 21-June 21), Kali Muriaticum support',
+                    clinical: 'Weak with digestive issues, worry/anxiety, mental processing difficulties.'
+                },
+                '25': {
+                    name: 'Liver MP (LIV-14)',
+                    prl: 'Liver-ND™, Pr. Multi Vitamin, Medi-Clay-FX™, Pr. NAC, HM-ND™',
+                    jsj: 'MIDDLE finger hold (20-60 min) - Anger/detox support. SEL 16, 22. Peak: 2-4 AM',
+                    band: 'Green (harmonizing frequency governing balance)',
+                    timing: 'Pisces (Feb 20-Mar 21), Ferrum Phosphoricum support',
+                    clinical: 'Weak with liver dysfunction, anger/frustration, detoxification issues.'
+                },
+                '21L': {
+                    name: 'Adrenal Left',
+                    prl: 'Adaptogen-R3™, AdrenaVen™, Pr. Multi Vitamin, NZ-Red Velvet Deer Antler',
+                    jsj: 'INDEX finger hold (20-60 min) - Past stress/adrenal support. SEL 23',
+                    band: 'Orange/Red (creative energy and vitality)',
+                    timing: 'Stress response timing, adaptogenic support',
+                    clinical: 'Often weak with kidney points. Classic adrenal exhaustion pattern.'
+                },
+                '21R': {
+                    name: 'Adrenal Right',
+                    prl: 'Adaptogen-R3™, AdrenaVen™, Pr. Multi Vitamin, NZ-Red Velvet Deer Antler',
+                    jsj: 'INDEX finger hold (20-60 min) - Current stress/adrenal support. SEL 23',
+                    band: 'Orange/Red (creative energy and vitality)',
+                    timing: 'Stress response timing, adaptogenic support',
+                    clinical: 'Often weak with kidney points. Chronic fatigue, poor stress tolerance.'
+                },
+                '29L': {
+                    name: 'Lung Left',
+                    prl: 'Allicidin®, Pr. Oregano Oil, AllerCaps, Pr. Multi Vitamin',
+                    jsj: 'RING finger hold (20-60 min) - Grief/breathing support. SEL 4, 13. Peak: 4-6 AM',
+                    band: 'White/Blue (integration and communication frequencies)',
+                    timing: 'Aries (Mar 21-Apr 21), Kali Phosphoricum support',
+                    clinical: 'Weak with respiratory issues, grief, difficulty processing loss.'
+                },
+                '29R': {
+                    name: 'Lung Right',
+                    prl: 'Allicidin®, Pr. Oregano Oil, AllerCaps, Pr. Multi Vitamin',
+                    jsj: 'RING finger hold (20-60 min) - Grief/breathing support. SEL 4, 13. Peak: 4-6 AM',
+                    band: 'White/Blue (integration and communication frequencies)',
+                    timing: 'Aries (Mar 21-Apr 21), Kali Phosphoricum support',
+                    clinical: 'Weak with respiratory issues, grief, chronic cough.'
+                },
+                '36A': {
+                    name: 'Skin Area 1 (S11)',
+                    prl: 'Medi-Clay-FX™, HM-ND™, Pr. NAC (INTERFERENCE FIELD - requires geometric correction FIRST)',
+                    jsj: 'Hold finger for affected organ AFTER geometric clearing. Address interference first!',
+                    band: 'Negative Green (carrier wave - requires horizontal orientation)',
+                    timing: 'IMMEDIATE PRIORITY - blocks all other healing until cleared',
+                    clinical: '🚨 CRITICAL: Must clear geometrically before any other treatment. Blocks entire energy system.'
+                },
+                '36B': {
+                    name: 'Skin Area 2 (S11)',
+                    prl: 'Medi-Clay-FX™, HM-ND™, Pr. NAC (INTERFERENCE FIELD - requires geometric correction FIRST)',
+                    jsj: 'Hold finger for affected organ AFTER geometric clearing. Address interference first!',
+                    band: 'Negative Green (carrier wave - requires horizontal orientation)',
+                    timing: 'IMMEDIATE PRIORITY - blocks all other healing until cleared',
+                    clinical: '🚨 CRITICAL: Must clear geometrically before any other treatment. Blocks entire energy system.'
+                },
+                '36C': {
+                    name: 'Skin Area 3 (S11)',
+                    prl: 'Medi-Clay-FX™, HM-ND™, Pr. NAC (INTERFERENCE FIELD - requires geometric correction FIRST)',
+                    jsj: 'Hold finger for affected organ AFTER geometric clearing. Address interference first!',
+                    band: 'Negative Green (carrier wave - requires horizontal orientation)',
+                    timing: 'IMMEDIATE PRIORITY - blocks all other healing until cleared',
+                    clinical: '🚨 CRITICAL: Must clear geometrically before any other treatment. Blocks entire energy system.'
+                }
+            };
+            
+            // Generate recommendations for each selected point
+            pointValues.forEach(pointValue => {
+                const point = selectedPoints.find(p => p.value === pointValue);
+                const protocol = standardProtocols[pointValue];
+                
+                if (protocol) {
+                    recommendations.push({
+                        point: point.name,
+                        prl: protocol.prl,
+                        jsj: protocol.jsj,
+                        band: protocol.band,
+                        timing: protocol.timing,
+                        clinical: protocol.clinical
+                    });
+                } else {
+                    // Default for points not yet in enhanced protocol
+                    recommendations.push({
+                        point: point.name,
+                        prl: 'Refer to complete QRA clinical guide for specific protocols',
+                        jsj: 'Use organ-specific finger hold from JSJ correlation chart',
+                        band: 'Refer to 12-band spectrum correlation',
+                        timing: 'Check organ flow timing and zodiacal correspondence',
+                        clinical: 'Consult complete clinical integration guide for patterns'
+                    });
+                }
+            });
+            
+            return recommendations;
+        }
+
+        function getCustomRecommendations(selectedPoints) {
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            const customRecs = [];
+            const pointNames = selectedPoints.map(p => p.name);
+            
+            savedProtocols.forEach(protocol => {
+                if (protocol.weakPoints) {
+                    // Check if any of the current weak points match saved protocols
+                    const matchingPoints = pointNames.filter(point => 
+                        protocol.weakPoints.includes(point)
+                    );
+                    
+                    if (matchingPoints.length > 0) {
+                        customRecs.push({
+                            context: `Previous case with ${matchingPoints.join(', ')}`,
+                            solution: protocol.customSolutions || 'No custom solution documented',
+                            jsjUsed: protocol.jsjProtocolsUsed || 'No JSJ protocol documented'
+                        });
+                    }
+                }
+            });
+            
+            return customRecs;
+        }
+
+        function displayRecommendations(recommendations, customRecommendations, patternAnalysis, selectedPoints) {
+            const resultsDiv = document.getElementById('recommendations-results');
+            let html = '<h3>🎯 QRA Protocol Recommendations</h3>';
+            
+            // Display selected weak points
+            html += '<div class="weak-points-summary">';
+            html += '<h4>📊 Assessment Summary</h4>';
+            html += '<p><strong>Weak Points Identified:</strong></p><ul>';
+            selectedPoints.forEach(point => {
+                html += `<li>${point.name}</li>`;
+            });
+            html += '</ul></div>';
+            
+            // Display pattern analysis with JSJ protocols
+            if (patternAnalysis.patterns.length > 0) {
+                html += '<div class="pattern-analysis">';
+                html += '<h4>🔍 Pattern Recognition</h4>';
+                patternAnalysis.patterns.forEach(pattern => {
+                    html += `<p>${pattern}</p>`;
+                });
+                html += '</div>';
+            }
+            
+            // Display JSJ protocols
+            if (patternAnalysis.jsjProtocols && patternAnalysis.jsjProtocols.length > 0) {
+                html += '<div class="jsj-protocols" style="background: #e8f4f8; border: 1px solid #b8daff; border-radius: 8px; padding: 15px; margin-bottom: 20px;">';
+                html += '<h4>🤲 Jin Shin Jyutsu Protocols</h4>';
+                patternAnalysis.jsjProtocols.forEach(protocol => {
+                    html += `<p><strong>${protocol}</strong></p>`;
+                });
+                html += '</div>';
+            }
+            
+            // Display priorities
+            if (patternAnalysis.priorities.length > 0) {
+                html += '<div class="priority-analysis">';
+                html += '<h4>🎯 Treatment Priorities</h4>';
+                patternAnalysis.priorities.forEach(priority => {
+                    html += `<p><strong>${priority}</strong></p>`;
+                });
+                html += '</div>';
+            }
+            
+            // Critical Safety Warning for Interference Fields
+            const pointValues = selectedPoints.map(p => p.value);
+            if (pointValues.some(p => p.startsWith('36'))) {
+                html += '<div style="background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px; padding: 20px; margin: 20px 0;">';
+                html += '<h4 style="color: #721c24; margin: 0 0 10px 0;">🚨 CRITICAL SAFETY WARNING</h4>';
+                html += '<p style="color: #721c24; font-weight: bold; margin: 0;">INTERFERENCE FIELDS DETECTED (Skin Areas)</p>';
+                html += '<p style="color: #721c24; margin: 10px 0 0 0;">Any QRA points testing at Skin Areas (S11) indicate INTERFERENCE FIELDS from scars, burns, or trauma sites. These MUST be cleared geometrically using BioGeometry tools BEFORE any nutritional or JSJ protocols will be effective. Interference fields block all other healing until properly addressed.</p>';
+                html += '</div>';
+            }
+            
+            // Standard recommendations with full integration
+            if (recommendations.length > 0) {
+                html += '<div class="standard-recommendations">';
+                html += '<h4>📋 Integrated Protocol Recommendations</h4>';
+                recommendations.forEach(rec => {
+                    const priorityStyle = rec.clinical && rec.clinical.includes('🚨') ? 
+                        'border-left-color: #dc3545; background: #f8d7da;' : 
+                        'border-left-color: #007bff;';
+                    
+                    html += `<div class="recommendation-item" style="${priorityStyle}">
+                        <h5><strong>${rec.point}</strong></h5>
+                        
+                        <div style="margin: 10px 0;">
+                            <strong>🥄 PRL Supplements:</strong> ${rec.prl}
+                        </div>
+                        
+                        <div style="margin: 10px 0;">
+                            <strong>🤲 JSJ Protocol:</strong> ${rec.jsj}
+                        </div>
+                        
+                        <div style="margin: 10px 0;">
+                            <strong>🌈 Vibrational Band:</strong> ${rec.band}
+                        </div>
+                        
+                        <div style="margin: 10px 0;">
+                            <strong>⏰ Timing/Zodiacal:</strong> ${rec.timing}
+                        </div>
+                        
+                        <div style="margin: 10px 0; font-style: italic; color: #666;">
+                            <strong>📝 Clinical Notes:</strong> ${rec.clinical}
+                        </div>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+            
+            // Custom recommendations from saved protocols
+            if (customRecommendations.length > 0) {
+                html += '<div class="custom-recommendations">';
+                html += '<h4>🧠 Your Previous Solutions</h4>';
+                customRecommendations.forEach(rec => {
+                    html += `<div class="custom-recommendation-item">
+                        <strong>${rec.context}:</strong> ${rec.solution}
+                        ${rec.jsjUsed ? `<br><strong>JSJ Used:</strong> ${rec.jsjUsed}` : ''}
+                        <small class="success-note">✅ Documented Success</small>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+            
+            // JSJ Quick Reference Guide
+            html += '<div class="jsj-reference" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-top: 20px;">';
+            html += '<h4>🤲 JSJ Quick Reference Guide</h4>';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">';
+            
+            html += `<div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #28a745;">
+                <strong>👍 THUMB</strong> (Stomach/Spleen - Worry)<br>
+                <em>Hold 20-60 min</em><br>
+                Peak: 8-10 AM (Stomach), 10 AM-12 PM (Spleen)<br>
+                Use for: Digestive issues, worry patterns, foundation support
+            </div>`;
+            
+            html += `<div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff;">
+                <strong>☝️ INDEX</strong> (Kidney/Bladder - Fear)<br>
+                <em>Hold 20-60 min</em><br>
+                Peak: 4-6 PM (Bladder), 6-8 PM (Kidney)<br>
+                Use for: Kidney/adrenal issues, fear patterns, stress
+            </div>`;
+            
+            html += `<div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107;">
+                <strong>🖕 MIDDLE</strong> (Liver/Circulation - Anger)<br>
+                <em>Hold 20-60 min</em><br>
+                Peak: 12-2 AM (Gallbladder), 2-4 AM (Liver)<br>
+                Use for: Liver issues, anger patterns, detox support
+            </div>`;
+            
+            html += `<div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #dc3545;">
+                <strong>💍 RING</strong> (Lung/Large Intestine - Grief)<br>
+                <em>Hold 20-60 min</em><br>
+                Peak: 4-6 AM (Lung), 6-8 AM (Large Intestine)<br>
+                Use for: Respiratory issues, grief patterns, letting go
+            </div>`;
+            
+            html += `<div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #6f42c1;">
+                <strong>🤙 LITTLE</strong> (Heart/Small Intestine - Pretense)<br>
+                <em>Hold 20-60 min</em><br>
+                Peak: 12-2 PM (Heart), 2-4 PM (Small Intestine)<br>
+                Use for: Heart issues, circulation, emotional authenticity
+            </div>`;
+            
+            html += '</div>';
+            html += '<p style="margin-top: 15px; font-style: italic; color: #666;"><strong>💡 JSJ Instructions:</strong> Hold finger gently until you feel a pulse, then continue for 20-60 minutes. Can hold multiple fingers in sequence or bilaterally for enhanced effect.</p>';
+            html += '</div>';
+            
+            // Knowledge gaps
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            const gaps = identifyProtocolGaps(selectedPoints, savedProtocols);
+            if (gaps.length > 0) {
+                html += '<div class="knowledge-gaps">';
+                html += '<h4>❓ Research Opportunities</h4>';
+                html += '<p>Consider documenting protocols for these combinations:</p>';
+                gaps.forEach(gap => {
+                    html += `<p class="gap-item">• ${gap}</p>`;
+                });
+                html += '</div>';
+            }
+            
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+            
+            // Show protocol form and pre-populate
+            document.getElementById('protocol-form').style.display = 'block';
+            document.getElementById('assessment-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('weak-points-found').value = selectedPoints.map(p => p.name).join(', ');
+        }
+        
+        function identifyProtocolGaps(selectedPoints, savedProtocols) {
+            const gaps = [];
+            const pointNames = selectedPoints.map(p => p.name);
+            
+            // Check for specific point combinations not in saved protocols
+            for (let i = 0; i < pointNames.length; i++) {
+                for (let j = i + 1; j < pointNames.length; j++) {
+                    const combo = [pointNames[i], pointNames[j]].sort().join(' + ');
+                    const hasProtocol = savedProtocols.some(protocol => 
+                        protocol.weakPoints && 
+                        protocol.weakPoints.includes(pointNames[i]) && 
+                        protocol.weakPoints.includes(pointNames[j])
+                    );
+                    
+                    if (!hasProtocol) {
+                        gaps.push(combo);
+                    }
+                }
+            }
+            
+            return [...new Set(gaps)].slice(0, 5); // Limit to 5 most important gaps
+        }
+
+        // Photo upload handling for different sections
+        function handlePhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            const preview = document.getElementById('photo-preview');
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.setAttribute('data-filename', file.name);
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function handleEmitterPhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            const preview = document.getElementById('emitter-photo-preview');
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.setAttribute('data-filename', file.name);
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function handleDialPhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            const preview = document.getElementById('dial-photo-preview');
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.setAttribute('data-filename', file.name);
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Save protocol to localStorage
+        function saveProtocol() {
+            const protocol = {
+                id: Date.now(),
+                date: document.getElementById('assessment-date').value,
+                clientInitials: document.getElementById('client-initials').value,
+                weakPoints: document.getElementById('weak-points-found').value,
+                emitterMeasurements: document.getElementById('emitter-measurements').value,
+                biosignatureDetails: document.getElementById('biosignature-details').value,
+                dialAngles: document.getElementById('dial-angles').value,
+                jsjProtocolsUsed: document.getElementById('jsj-protocols-used').value,
+                customSolutions: document.getElementById('custom-solutions').value,
+                successIndicators: document.getElementById('success-indicators').value,
+                clinicalNotes: document.getElementById('clinical-notes').value,
+                followUpDate: document.getElementById('follow-up-date').value,
+                protocolPriority: document.getElementById('protocol-priority').value,
+                photos: Array.from(document.querySelectorAll('#photo-preview img')).map(img => ({
+                    src: img.src,
+                    filename: img.getAttribute('data-filename'),
+                    type: 'completed-work'
+                })),
+                emitterPhotos: Array.from(document.querySelectorAll('#emitter-photo-preview img')).map(img => ({
+                    src: img.src,
+                    filename: img.getAttribute('data-filename'),
+                    type: 'emitter'
+                })),
+                dialPhotos: Array.from(document.querySelectorAll('#dial-photo-preview img')).map(img => ({
+                    src: img.src,
+                    filename: img.getAttribute('data-filename'),
+                    type: 'dial'
+                }))
+            };
+            
+            if (!protocol.date || !protocol.weakPoints) {
+                alert('Please fill in at least the assessment date and weak points.');
+                return;
+            }
+            
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            savedProtocols.push(protocol);
+            localStorage.setItem('qraProtocols', JSON.stringify(savedProtocols));
+            
+            alert('✅ Protocol saved successfully!');
+            displaySavedProtocols();
+            clearForm();
+        }
+
+        // Print protocol
+        function printProtocol() {
+            window.print();
+        }
+
+        // Clear form
+        function clearForm() {
+            document.querySelectorAll('input, textarea, select').forEach(field => {
+                if (field.type !== 'date' && field.id !== 'assessment-date') {
+                    field.value = '';
+                }
+            });
+            document.getElementById('photo-preview').innerHTML = '';
+            document.getElementById('emitter-photo-preview').innerHTML = '';
+            document.getElementById('dial-photo-preview').innerHTML = '';
+            document.querySelectorAll('.weak-point').forEach(cb => cb.checked = false);
+            document.getElementById('recommendations-results').style.display = 'none';
+            document.getElementById('protocol-form').style.display = 'none';
+        }
+
+        // Display saved protocols
+        function displaySavedProtocols() {
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            const container = document.getElementById('saved-protocols-list');
+            
+            if (savedProtocols.length === 0) {
+                container.innerHTML = '<p>No saved protocols yet. Complete an assessment to get started!</p>';
+                return;
+            }
+            
+            let html = '';
+            savedProtocols.reverse().forEach(protocol => {
+                html += `
+                    <div class="protocol-item">
+                        <div class="protocol-header">
+                            <div>
+                                <span class="protocol-date">${protocol.date}</span>
+                                ${protocol.clientInitials ? `- ${protocol.clientInitials}` : ''}
+                                <span class="protocol-priority-badge">[${protocol.protocolPriority || 'routine'}]</span>
+                            </div>
+                            <div class="protocol-actions">
+                                <button class="view-btn" onclick="viewProtocol(${protocol.id})">View</button>
+                                <button class="delete-btn" onclick="deleteProtocol(${protocol.id})">Delete</button>
+                            </div>
+                        </div>
+                        <div class="protocol-summary">
+                            <strong>Weak Points:</strong> ${protocol.weakPoints}<br>
+                            ${protocol.jsjProtocolsUsed ? `<strong>JSJ Used:</strong> ${protocol.jsjProtocolsUsed.substring(0, 100)}...` : ''}
+                            ${protocol.customSolutions ? `<strong>Solutions:</strong> ${protocol.customSolutions.substring(0, 100)}...` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // View specific protocol
+        function viewProtocol(id) {
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            const protocol = savedProtocols.find(p => p.id === id);
+            
+            if (!protocol) return;
+            
+            // Populate form with protocol data
+            document.getElementById('assessment-date').value = protocol.date;
+            document.getElementById('client-initials').value = protocol.clientInitials || '';
+            document.getElementById('weak-points-found').value = protocol.weakPoints;
+            document.getElementById('emitter-measurements').value = protocol.emitterMeasurements || '';
+            document.getElementById('biosignature-details').value = protocol.biosignatureDetails || '';
+            document.getElementById('dial-angles').value = protocol.dialAngles || '';
+            document.getElementById('jsj-protocols-used').value = protocol.jsjProtocolsUsed || '';
+            document.getElementById('custom-solutions').value = protocol.customSolutions || '';
+            document.getElementById('success-indicators').value = protocol.successIndicators || '';
+            document.getElementById('clinical-notes').value = protocol.clinicalNotes || '';
+            document.getElementById('follow-up-date').value = protocol.followUpDate || '';
+            document.getElementById('protocol-priority').value = protocol.protocolPriority || 'routine';
+            
+            // Display completed work photos
+            const photoPreview = document.getElementById('photo-preview');
+            photoPreview.innerHTML = '';
+            if (protocol.photos) {
+                protocol.photos.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.src;
+                    img.setAttribute('data-filename', photo.filename);
+                    photoPreview.appendChild(img);
+                });
+            }
+            
+            // Display emitter photos
+            const emitterPreview = document.getElementById('emitter-photo-preview');
+            emitterPreview.innerHTML = '';
+            if (protocol.emitterPhotos) {
+                protocol.emitterPhotos.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.src;
+                    img.setAttribute('data-filename', photo.filename);
+                    emitterPreview.appendChild(img);
+                });
+            }
+            
+            // Display dial photos
+            const dialPreview = document.getElementById('dial-photo-preview');
+            dialPreview.innerHTML = '';
+            if (protocol.dialPhotos) {
+                protocol.dialPhotos.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.src;
+                    img.setAttribute('data-filename', photo.filename);
+                    dialPreview.appendChild(img);
+                });
+            }
+            
+            document.getElementById('protocol-form').style.display = 'block';
+            document.getElementById('protocol-form').scrollIntoView();
+        }
+
+        // Delete protocol
+        function deleteProtocol(id) {
+            if (confirm('Are you sure you want to delete this protocol?')) {
+                const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+                const filteredProtocols = savedProtocols.filter(p => p.id !== id);
+                localStorage.setItem('qraProtocols', JSON.stringify(filteredProtocols));
+                displaySavedProtocols();
+            }
+        }
+
+        // Export all data
+        function exportData() {
+            const savedProtocols = JSON.parse(localStorage.getItem('qraProtocols') || '[]');
+            const dataStr = JSON.stringify(savedProtocols, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `qra-protocols-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            displaySavedProtocols();
+        });
+    </script>
+</body>
+</html>
